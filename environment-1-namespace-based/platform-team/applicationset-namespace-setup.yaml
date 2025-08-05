@@ -38,7 +38,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/your-org/itn-demo'
+        repoURL: 'https://github.com/sluetze/itn-demo'
         targetRevision: main
         path: 'environment-1-namespace-based/application-team/overlays/{{env}}'
       destination:

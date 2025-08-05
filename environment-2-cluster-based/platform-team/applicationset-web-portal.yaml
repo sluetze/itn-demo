@@ -27,7 +27,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/your-org/itn-demo'
+        repoURL: 'https://github.com/sluetze/itn-demo'
         targetRevision: main
         path: 'application/overlays/cluster-{{metadata.labels.environment}}'
         kustomize:

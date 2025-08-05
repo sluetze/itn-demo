@@ -29,7 +29,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/your-org/itn-demo'
+        repoURL: 'https://github.com/sluetze/itn-demo'
         targetRevision: main
         path: 'environment-2-cluster-based/application-team/overlays/{{metadata.labels.environment}}'
       destination:
