@@ -1,38 +1,38 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: frontend-team-namespace-setup
+  name: sluetzen-frontend-team-namespace-setup
   namespace: openshift-gitops
   labels:
-    app.kubernetes.io/name: frontend-team-setup
+    app.kubernetes.io/name: sluetzen-frontend-team-setup
     app.kubernetes.io/part-of: platform-governance
 spec:
   generators:
   - list:
       elements:
       - env: dev
-        namespace: frontend-team-dev
+        namespace: sluetzen-frontend-team-dev
         cpu_limit: "2"
         memory_limit: "4Gi"
         storage_limit: "10Gi"
         replicas: "1"
       - env: qa
-        namespace: frontend-team-qa
+        namespace: sluetzen-frontend-team-qa
         cpu_limit: "4"
         memory_limit: "8Gi"
         storage_limit: "20Gi"
         replicas: "2"
       - env: prod
-        namespace: frontend-team-prod
+        namespace: sluetzen-frontend-team-prod
         cpu_limit: "8"
         memory_limit: "16Gi"
         storage_limit: "50Gi"
         replicas: "3"
   template:
     metadata:
-      name: 'frontend-team-{{env}}-setup'
+      name: 'sluetzen-frontend-team-{{env}}-setup'
       labels:
-        app.kubernetes.io/name: 'frontend-team-{{env}}'
+        app.kubernetes.io/name: 'sluetzen-frontend-team-{{env}}'
         app.kubernetes.io/part-of: platform-governance
         environment: '{{env}}'
     spec:

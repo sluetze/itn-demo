@@ -2,8 +2,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: frontend-team-admin
-  namespace: frontend-team-dev
+  name: sluetzen-frontend-team-admin
+  namespace: sluetzen-frontend-team-dev
   labels:
     team: frontend-team
     environment: dev
@@ -45,8 +45,8 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: frontend-team-admin-binding
-  namespace: frontend-team-dev
+  name: sluetzen-frontend-team-admin-binding
+  namespace: sluetzen-frontend-team-dev
   labels:
     team: frontend-team
     environment: dev
@@ -59,18 +59,18 @@ subjects:
   name: frontend-lead@company.com
   apiGroup: rbac.authorization.k8s.io
 - kind: Group
-  name: frontend-team-dev
+  name: sluetzen-frontend-team-dev
   apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: Role
-  name: frontend-team-admin
+  name: sluetzen-frontend-team-admin
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: frontend-team-image-puller
-  namespace: frontend-team-dev
+  name: sluetzen-frontend-team-image-puller
+  namespace: sluetzen-frontend-team-dev
   labels:
     team: frontend-team
     environment: dev
@@ -78,7 +78,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: frontend-team-dev
+  namespace: sluetzen-frontend-team-dev
 - kind: User
   name: frontend-dev@company.com
   apiGroup: rbac.authorization.k8s.io

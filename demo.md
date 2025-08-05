@@ -148,9 +148,9 @@ oc apply -f environment-2-cluster-based/platform-team/applicationset-web-portal.
 ### Environment Comparison
 ```
 Environment 1 (Namespace-based):
-├── frontend-team-dev: ✅ 1/1 pods (web-portal-dev.apps.cluster.local)
-├── frontend-team-qa:  ✅ 2/2 pods (web-portal-qa.apps.cluster.local)
-└── frontend-team-prod: ✅ 3/3 pods (web-portal.apps.cluster.local)
+├── sluetzen-frontend-team-dev: ✅ 1/1 pods (web-portal-dev.apps.cluster.local)
+├── sluetzen-frontend-team-qa:  ✅ 2/2 pods (web-portal-qa.apps.cluster.local)
+└── sluetzen-frontend-team-prod: ✅ 3/3 pods (web-portal.apps.cluster.local)
 
 Environment 2 (Cluster-based):
 ├── Development Cluster: ✅ 1/1 pods (web-portal-dev.apps.dev-cluster.local)

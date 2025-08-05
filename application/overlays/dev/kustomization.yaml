@@ -9,7 +9,7 @@ metadata:
 resources:
 - ../../base
 
-namespace: frontend-team-dev
+namespace: sluetzen-frontend-team-dev
 
 namePrefix: dev-
 
@@ -34,7 +34,7 @@ configMapGenerator:
 - name: environment-config
   literals:
   - ENVIRONMENT=dev
-  - NAMESPACE=frontend-team-dev
+  - NAMESPACE=sluetzen-frontend-team-dev
   - ROUTE_HOST=web-portal-dev.apps.cluster.local
   - CLUSTER_DOMAIN=apps.cluster.local
   - IMAGE_TAG=latest

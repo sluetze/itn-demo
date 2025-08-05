@@ -2,7 +2,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: frontend-team-security-policy
+  name: sluetzen-frontend-team-security-policy
   namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
@@ -16,7 +16,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: frontend-team-security-context-policy
+          name: sluetzen-frontend-team-security-context-policy
         spec:
           remediationAction: enforce
           severity: high
@@ -26,7 +26,7 @@ spec:
                 apiVersion: v1
                 kind: LimitRange
                 metadata:
-                  name: frontend-team-limits
+                  name: sluetzen-frontend-team-limits
                   namespace: '{{ hub (index .ManagedClusterLabels "name") hub }}'
                 spec:
                   limits:
@@ -45,7 +45,7 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: frontend-team-network-policy
+  name: sluetzen-frontend-team-network-policy
   namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
@@ -59,7 +59,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: frontend-team-network-isolation
+          name: sluetzen-frontend-team-network-isolation
         spec:
           remediationAction: enforce
           severity: medium
@@ -69,7 +69,7 @@ spec:
                 apiVersion: networking.k8s.io/v1
                 kind: NetworkPolicy
                 metadata:
-                  name: frontend-team-isolation
+                  name: sluetzen-frontend-team-isolation
                   namespace: '{{ hub (index .ManagedClusterLabels "name") hub }}'
                 spec:
                   podSelector: {}
@@ -90,7 +90,7 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: frontend-team-policy-placement
+  name: sluetzen-frontend-team-policy-placement
   namespace: default
 spec:
   clusterConditions:
@@ -105,27 +105,27 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: frontend-team-security-policy-binding
+  name: sluetzen-frontend-team-security-policy-binding
   namespace: default
 placementRef:
-  name: frontend-team-policy-placement
+  name: sluetzen-frontend-team-policy-placement
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: frontend-team-security-policy
+- name: sluetzen-frontend-team-security-policy
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: frontend-team-network-policy-binding
+  name: sluetzen-frontend-team-network-policy-binding
   namespace: default
 placementRef:
-  name: frontend-team-policy-placement
+  name: sluetzen-frontend-team-policy-placement
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-- name: frontend-team-network-policy
+- name: sluetzen-frontend-team-network-policy
   kind: Policy
   apiGroup: policy.open-cluster-management.io

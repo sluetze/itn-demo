@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: frontend-team-qa
+  name: sluetzen-frontend-team-qa
   labels:
     environment: qa
   annotations:

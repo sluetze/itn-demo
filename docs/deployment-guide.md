@@ -28,7 +28,7 @@ oc apply -f environment-1-namespace-based/platform-team/applicationset-web-porta
 
 ### Configuration Variables
 The namespace-based environment supports configurable variables through Kustomize:
-- **Namespace Names**: `frontend-team-{dev,qa,prod}`
+- **Namespace Names**: `sluetzen-frontend-team-{dev,qa,prod}`
 - **Route Hostnames**: `web-portal-{env}.apps.cluster.local`
 - **Resource Limits**: Environment-specific CPU/memory quotas
 - **Image Tags**: Environment-specific container image versions

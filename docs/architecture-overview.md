@@ -245,7 +245,7 @@ The demo uses Kustomize for all configuration management instead of Helm, provid
 configMapGenerator:
 - name: environment-config
   literals:
-  - NAMESPACE_NAME=frontend-team-{dev,qa,prod}
+  - NAMESPACE_NAME=sluetzen-frontend-team-{dev,qa,prod}
   - ROUTE_HOST=web-portal-{env}.apps.cluster.local
   - CLUSTER_DOMAIN=apps.cluster.local
   - ENVIRONMENT={dev,qa,prod}

@@ -2,7 +2,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: frontend-team-multi-cluster-security-policy
+  name: sluetzen-frontend-team-multi-cluster-security-policy
   namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
@@ -16,7 +16,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: frontend-team-security-context-policy
+          name: sluetzen-frontend-team-security-context-policy
         spec:
           remediationAction: enforce
           severity: high
@@ -26,7 +26,7 @@ spec:
                 apiVersion: v1
                 kind: LimitRange
                 metadata:
-                  name: frontend-team-limits
+                  name: sluetzen-frontend-team-limits
                   namespace: frontend-team
                 spec:
                   limits:
@@ -44,7 +44,7 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: frontend-team-pod-security-policy
+  name: sluetzen-frontend-team-pod-security-policy
   namespace: default
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
@@ -57,7 +57,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: frontend-team-pod-security-standards
+          name: sluetzen-frontend-team-pod-security-standards
         spec:
           remediationAction: enforce
           severity: high
@@ -76,7 +76,7 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: frontend-team-environment-specific-policy
+  name: sluetzen-frontend-team-environment-specific-policy
   namespace: default
   annotations:
     policy.open-cluster-management.io/standards: Custom
@@ -99,7 +99,7 @@ spec:
                 apiVersion: networking.k8s.io/v1
                 kind: NetworkPolicy
                 metadata:
-                  name: frontend-team-production-isolation
+                  name: sluetzen-frontend-team-production-isolation
                   namespace: frontend-team
                 spec:
                   podSelector: {}
@@ -127,7 +127,7 @@ spec:
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
-  name: frontend-team-all-clusters-placement
+  name: sluetzen-frontend-team-all-clusters-placement
   namespace: default
 spec:
   clusterSets:
@@ -141,7 +141,7 @@ spec:
 apiVersion: cluster.open-cluster-management.io/v1beta1
 kind: Placement
 metadata:
-  name: frontend-team-prod-only-placement
+  name: sluetzen-frontend-team-prod-only-placement
   namespace: default
 spec:
   clusterSets:
@@ -156,30 +156,30 @@ spec:
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: frontend-team-security-policy-binding
+  name: sluetzen-frontend-team-security-policy-binding
   namespace: default
 placementRef:
-  name: frontend-team-all-clusters-placement
+  name: sluetzen-frontend-team-all-clusters-placement
   kind: Placement
   apiGroup: cluster.open-cluster-management.io
 subjects:
-- name: frontend-team-multi-cluster-security-policy
+- name: sluetzen-frontend-team-multi-cluster-security-policy
   kind: Policy
   apiGroup: policy.open-cluster-management.io
-- name: frontend-team-pod-security-policy
+- name: sluetzen-frontend-team-pod-security-policy
   kind: Policy
   apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: frontend-team-prod-policy-binding
+  name: sluetzen-frontend-team-prod-policy-binding
   namespace: default
 placementRef:
-  name: frontend-team-prod-only-placement
+  name: sluetzen-frontend-team-prod-only-placement
   kind: Placement
   apiGroup: cluster.open-cluster-management.io
 subjects:
-- name: frontend-team-environment-specific-policy
+- name: sluetzen-frontend-team-environment-specific-policy
   kind: Policy
   apiGroup: policy.open-cluster-management.io

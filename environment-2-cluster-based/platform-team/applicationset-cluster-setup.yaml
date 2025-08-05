@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: frontend-team-cluster-setup
+  name: sluetzen-frontend-team-cluster-setup
   namespace: openshift-gitops
   labels:
-    app.kubernetes.io/name: frontend-team-cluster-setup
+    app.kubernetes.io/name: sluetzen-frontend-team-cluster-setup
     app.kubernetes.io/part-of: platform-governance
 spec:
   generators:
@@ -20,9 +20,9 @@ spec:
         environment: '{{ metadata.labels.environment }}'
   template:
     metadata:
-      name: 'frontend-team-{{metadata.labels.environment}}-setup'
+      name: 'sluetzen-frontend-team-{{metadata.labels.environment}}-setup'
       labels:
-        app.kubernetes.io/name: 'frontend-team-{{metadata.labels.environment}}'
+        app.kubernetes.io/name: 'sluetzen-frontend-team-{{metadata.labels.environment}}'
         app.kubernetes.io/part-of: platform-governance
         environment: '{{metadata.labels.environment}}'
         cluster: '{{name}}'

@@ -9,7 +9,7 @@ metadata:
 resources:
 - ../../base
 
-namespace: frontend-team-qa
+namespace: sluetzen-frontend-team-qa
 
 namePrefix: qa-
 
@@ -34,7 +34,7 @@ configMapGenerator:
 - name: environment-config
   literals:
   - ENVIRONMENT=qa
-  - NAMESPACE=frontend-team-qa
+  - NAMESPACE=sluetzen-frontend-team-qa
   - ROUTE_HOST=web-portal-qa.apps.cluster.local
   - CLUSTER_DOMAIN=apps.cluster.local
   - IMAGE_TAG=stable

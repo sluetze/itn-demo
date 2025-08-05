@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: frontend-team-dev
+  name: sluetzen-frontend-team-dev
   labels:
     environment: dev
   annotations:

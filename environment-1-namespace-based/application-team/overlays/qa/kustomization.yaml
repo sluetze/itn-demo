@@ -2,14 +2,14 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 metadata:
-  name: frontend-team-qa
+  name: sluetzen-frontend-team-qa
   labels:
     environment: qa
 
 resources:
 - ../../
 
-namespace: frontend-team-qa
+namespace: sluetzen-frontend-team-qa
 
 commonLabels:
   environment: qa
@@ -19,7 +19,7 @@ configMapGenerator:
 - name: environment-config
   behavior: replace
   literals:
-  - NAMESPACE_NAME=frontend-team-qa
+  - NAMESPACE_NAME=sluetzen-frontend-team-qa
   - ENVIRONMENT=qa
   - CPU_LIMIT=4
   - MEMORY_LIMIT=8Gi

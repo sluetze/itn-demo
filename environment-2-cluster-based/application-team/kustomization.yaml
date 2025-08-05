@@ -2,9 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 metadata:
-  name: frontend-team-cluster-base
+  name: sluetzen-frontend-team-cluster-base
   labels:
-    app.kubernetes.io/name: frontend-team-cluster-setup
+    app.kubernetes.io/name: sluetzen-frontend-team-cluster-setup
     app.kubernetes.io/part-of: platform-governance
 
 resources:

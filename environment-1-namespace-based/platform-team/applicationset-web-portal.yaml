@@ -1,27 +1,27 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: frontend-team-web-portal
+  name: sluetzen-frontend-team-web-portal
   namespace: openshift-gitops
   labels:
-    app.kubernetes.io/name: frontend-team-web-portal
+    app.kubernetes.io/name: sluetzen-frontend-team-web-portal
     app.kubernetes.io/part-of: frontend-team
 spec:
   generators:
   - list:
       elements:
       - env: dev
-        namespace: frontend-team-dev
+        namespace: sluetzen-frontend-team-dev
         overlay: dev
         replicas: "1"
         hostname: web-portal-dev.apps.cluster.local
       - env: qa
-        namespace: frontend-team-qa
+        namespace: sluetzen-frontend-team-qa
         overlay: qa
         replicas: "2"
         hostname: web-portal-qa.apps.cluster.local
       - env: prod
-        namespace: frontend-team-prod
+        namespace: sluetzen-frontend-team-prod
         overlay: prod
         replicas: "3"
         hostname: web-portal.apps.cluster.local
