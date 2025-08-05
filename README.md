@@ -4,7 +4,7 @@ This repository contains the complete setup for demonstrating Red Hat Advanced C
 
 ## Repository Structure
 
-```
+```none
 ├── demo.md                              # Enhanced demo script
 ├── environment-1-namespace-based/       # Namespace-based environment separation
 ├── environment-2-cluster-based/         # Cluster-based environment separation
@@ -18,6 +18,7 @@ This repository contains the complete setup for demonstrating Red Hat Advanced C
 2. **Environment 2**: Cluster-based separation (multiple clusters with ACM labels)
 
 Each environment includes:
+
 - Platform team setup (ApplicationSets, governance policies)
 - Application team resources (namespaces, RBAC, quotas)
 - Sample web application (Web Portal)

@@ -161,6 +161,7 @@ itn-demo/
 - **Cluster-level Access**: Limited to necessary operations
 - **Service Accounts**: Dedicated accounts for automation
 - **Cross-cluster**: Image pulling capabilities
+- **ArgoCD Integration**: Service account permissions for ArgoCD application controller to manage LimitRanges and ResourceQuotas (namespace-based environment only)
 
 ## GitOps Workflow
 

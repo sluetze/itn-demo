@@ -89,3 +89,44 @@ roleRef:
   kind: ClusterRole
   name: system:image-puller
   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sluetzen-frontend-team-argocd-admin
+  namespace: sluetzen-frontend-team-dev
+  labels:
+    team: frontend-team
+    environment: dev
+    managed-by: platform-team
+rules:
+# ArgoCD needs to manage limitranges and resourcequotas
+- apiGroups: [""]
+  resources: ["limitranges", "resourcequotas"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+# ArgoCD needs to manage namespaces
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+# ArgoCD needs to manage RBAC resources
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sluetzen-frontend-team-argocd-admin-binding
+  namespace: sluetzen-frontend-team-dev
+  labels:
+    team: frontend-team
+    environment: dev
+    managed-by: platform-team
+subjects:
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
+roleRef:
+  kind: Role
+  name: sluetzen-frontend-team-argocd-admin
+  apiGroup: rbac.authorization.k8s.io

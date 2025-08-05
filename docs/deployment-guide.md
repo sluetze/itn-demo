@@ -27,11 +27,14 @@ oc apply -f environment-1-namespace-based/platform-team/applicationset-web-porta
 ```
 
 ### Configuration Variables
+
 The namespace-based environment supports configurable variables through Kustomize:
+
 - **Namespace Names**: `sluetzen-frontend-team-{dev,qa,prod}`
 - **Route Hostnames**: `web-portal-{env}.apps.cluster.local`
 - **Resource Limits**: Environment-specific CPU/memory quotas
 - **Image Tags**: Environment-specific container image versions
+- **ArgoCD Permissions**: Includes RBAC for ArgoCD application controller to manage LimitRanges and ResourceQuotas
 
 ### 2. Verify Deployment
 
