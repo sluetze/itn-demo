@@ -58,6 +58,7 @@ labels:
 - includeSelectors: true
   pairs:
     environment: prod
-patches:
-- path: namespace-patch.yaml
-- path: resourcequota-patch.yaml
+# Removed patches since replacements handle name changes
+# patches:
+# - path: namespace-patch.yaml
+# - path: resourcequota-patch.yaml

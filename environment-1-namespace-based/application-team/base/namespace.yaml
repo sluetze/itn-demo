@@ -11,5 +11,5 @@ metadata:
   annotations:
     created-by: "ACM ApplicationSet"
     environment: dev
-    openshift.io/description: "Namespace for frontend-team dev environment"
-    openshift.io/display-name: "Frontend Team Dev"
+    openshift.io/description: "Namespace for frontend-team environment"
+    openshift.io/display-name: "Frontend Team"

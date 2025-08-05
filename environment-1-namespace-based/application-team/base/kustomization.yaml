@@ -29,6 +29,10 @@ replacements:
     select:
       kind: Namespace
   - fieldPaths:
+    - metadata.labels.name
+    select:
+      kind: Namespace
+  - fieldPaths:
     - metadata.namespace
     select:
       kind: ResourceQuota
@@ -44,6 +48,16 @@ replacements:
     - metadata.namespace
     select:
       kind: LimitRange
+  - fieldPaths:
+    - subjects.[kind=Group].name
+    select:
+      kind: RoleBinding
+      name: sluetzen-frontend-team-admin-binding
+  - fieldPaths:
+    - subjects.[kind=ServiceAccount].namespace
+    select:
+      kind: RoleBinding
+      name: sluetzen-frontend-team-image-puller
 
 configMapGenerator:
 - literals:
