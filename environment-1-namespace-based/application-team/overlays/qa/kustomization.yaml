@@ -2,22 +2,19 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 metadata:
-  name: sluetzen-frontend-team-qa
   labels:
     environment: qa
+  name: sluetzen-frontend-team-qa
 
 resources:
-- ../../
+- ../../base
 
 namespace: sluetzen-frontend-team-qa
 
-commonLabels:
-  environment: qa
 
 # Override environment-specific configuration
 configMapGenerator:
-- name: environment-config
-  behavior: replace
+- behavior: replace
   literals:
   - NAMESPACE_NAME=sluetzen-frontend-team-qa
   - ENVIRONMENT=qa
@@ -26,36 +23,41 @@ configMapGenerator:
   - STORAGE_LIMIT=20Gi
   - TEAM_NAME=frontend-team
   - CLUSTER_DOMAIN=apps.cluster.local
+  name: environment-config
 
-patchesStrategicMerge:
-- namespace-patch.yaml
-- resourcequota-patch.yaml
 
 # Environment-specific replacements
 replacements:
 - source:
+    fieldPath: data.ENVIRONMENT
     kind: ConfigMap
     name: environment-config
-    fieldPath: data.ENVIRONMENT
   targets:
-  - select:
-      kind: Namespace
-    fieldPaths:
+  - fieldPaths:
     - metadata.labels.environment
     - metadata.annotations.environment
-  - select:
+    select:
+      kind: Namespace
+  - fieldPaths:
+    - metadata.labels.environment
+    select:
       kind: ResourceQuota
-    fieldPaths:
+  - fieldPaths:
     - metadata.labels.environment
-  - select:
+    select:
       kind: Role
-    fieldPaths:
+  - fieldPaths:
     - metadata.labels.environment
-  - select:
+    select:
       kind: RoleBinding
-    fieldPaths:
+  - fieldPaths:
     - metadata.labels.environment
-  - select:
+    select:
       kind: LimitRange
-    fieldPaths:
-    - metadata.labels.environment
+labels:
+- includeSelectors: true
+  pairs:
+    environment: qa
+patches:
+- path: namespace-patch.yaml
+- path: resourcequota-patch.yaml

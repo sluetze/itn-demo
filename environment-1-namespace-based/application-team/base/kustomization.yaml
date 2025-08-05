@@ -2,10 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 metadata:
-  name: sluetzen-frontend-team-base
   labels:
     app.kubernetes.io/name: sluetzen-frontend-team-setup
     app.kubernetes.io/part-of: platform-governance
+  name: sluetzen-frontend-team-base
 
 resources:
 - namespace.yaml
@@ -16,44 +16,46 @@ resources:
 # Default configuration - can be overridden by environment overlays
 namespace: sluetzen-frontend-team-dev
 
-commonLabels:
-  team: frontend-team
-  managed-by: platform-team
 
 # Configuration variables that can be replaced
 replacements:
 - source:
+    fieldPath: data.NAMESPACE_NAME
     kind: ConfigMap
     name: environment-config
-    fieldPath: data.NAMESPACE_NAME
   targets:
-  - select:
-      kind: Namespace
-    fieldPaths:
+  - fieldPaths:
     - metadata.name
-  - select:
+    select:
+      kind: Namespace
+  - fieldPaths:
+    - metadata.namespace
+    select:
       kind: ResourceQuota
-    fieldPaths:
+  - fieldPaths:
     - metadata.namespace
-  - select:
+    select:
       kind: Role
-    fieldPaths:
+  - fieldPaths:
     - metadata.namespace
-  - select:
+    select:
       kind: RoleBinding
-    fieldPaths:
+  - fieldPaths:
     - metadata.namespace
-  - select:
+    select:
       kind: LimitRange
-    fieldPaths:
-    - metadata.namespace
 
 configMapGenerator:
-- name: environment-config
-  literals:
+- literals:
   - NAMESPACE_NAME=sluetzen-frontend-team-dev
   - ENVIRONMENT=dev
   - CPU_LIMIT=2
   - MEMORY_LIMIT=4Gi
   - STORAGE_LIMIT=10Gi
   - TEAM_NAME=frontend-team
+  name: environment-config
+labels:
+- includeSelectors: true
+  pairs:
+    managed-by: platform-team
+    team: frontend-team
