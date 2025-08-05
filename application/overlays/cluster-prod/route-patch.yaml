@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: web-portal
+  annotations:
+    haproxy.router.openshift.io/timeout: 30s
+    haproxy.router.openshift.io/balance: roundrobin
+    haproxy.router.openshift.io/disable_cookies: "true"
+spec:
+  host: web-portal.apps.prod-cluster.local
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

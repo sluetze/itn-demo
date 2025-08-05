@@ -1,0 +1,62 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: frontend-team-web-portal
+  namespace: openshift-gitops
+  labels:
+    app.kubernetes.io/name: frontend-team-web-portal
+    app.kubernetes.io/part-of: frontend-team
+spec:
+  generators:
+  - list:
+      elements:
+      - env: dev
+        namespace: frontend-team-dev
+        overlay: dev
+        replicas: "1"
+        hostname: web-portal-dev.apps.cluster.local
+      - env: qa
+        namespace: frontend-team-qa
+        overlay: qa
+        replicas: "2"
+        hostname: web-portal-qa.apps.cluster.local
+      - env: prod
+        namespace: frontend-team-prod
+        overlay: prod
+        replicas: "3"
+        hostname: web-portal.apps.cluster.local
+  template:
+    metadata:
+      name: 'web-portal-{{env}}'
+      labels:
+        app.kubernetes.io/name: 'web-portal-{{env}}'
+        app.kubernetes.io/part-of: frontend-team
+        environment: '{{env}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/your-org/itn-demo'
+        targetRevision: main
+        path: 'application/overlays/{{overlay}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=false  # Namespace should already exist from setup
+        - PrunePropagationPolicy=foreground
+        - PruneLast=true
+        - RespectIgnoreDifferences=true
+      revisionHistoryLimit: 10
+      ignoreDifferences:
+      - group: route.openshift.io
+        kind: Route
+        jsonPointers:
+        - /spec/host
+      - group: apps
+        kind: Deployment
+        jsonPointers:
+        - /spec/replicas

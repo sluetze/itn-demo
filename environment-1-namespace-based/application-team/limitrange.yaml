@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: frontend-team-limits
+  namespace: frontend-team-dev
+  labels:
+    team: frontend-team
+    environment: dev
+    managed-by: platform-team
+spec:
+  limits:
+  # Container limits
+  - default:
+      cpu: "1"
+      memory: "2Gi"
+    defaultRequest:
+      cpu: "100m"
+      memory: "128Mi"
+    max:
+      cpu: "2"
+      memory: "4Gi"
+    min:
+      cpu: "50m"
+      memory: "64Mi"
+    type: Container
+  # Pod limits
+  - max:
+      cpu: "2"
+      memory: "4Gi"
+    type: Pod
+  # PVC limits
+  - max:
+      storage: "20Gi"
+    min:
+      storage: "1Gi"
+    type: PersistentVolumeClaim

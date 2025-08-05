@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: frontend-team-qa-cluster
+  labels:
+    environment: qa
+    cluster: qa-cluster
+
+resources:
+- ../../
+
+namespace: frontend-team
+
+commonLabels:
+  environment: qa
+  cluster: qa-cluster
+
+# QA cluster specific configuration
+configMapGenerator:
+- name: cluster-config
+  behavior: replace
+  literals:
+  - CLUSTER_NAME=qa-cluster
+  - ENVIRONMENT=qa
+  - NAMESPACE_NAME=frontend-team
+  - CPU_LIMIT=4
+  - MEMORY_LIMIT=8Gi
+  - STORAGE_LIMIT=20Gi
+  - TEAM_NAME=frontend-team
+  - CLUSTER_DOMAIN=apps.qa-cluster.local
+
+patchesStrategicMerge:
+- namespace-patch.yaml
+- resourcequota-patch.yaml

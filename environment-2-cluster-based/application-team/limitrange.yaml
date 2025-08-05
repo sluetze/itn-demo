@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ .Values.namespace }}-limits
+  namespace: {{ .Values.namespace }}
+  labels:
+    team: {{ .Values.team.name }}
+    environment: {{ .Values.environment }}
+    cluster: {{ .Values.cluster.name }}
+    managed-by: {{ .Values.labels.managed-by }}
+spec:
+  limits:
+  # Container limits - environment specific
+  - default:
+      cpu: "{{ if eq .Values.environment "prod" }}2{{ else if eq .Values.environment "qa" }}1{{ else }}500m{{ end }}"
+      memory: "{{ if eq .Values.environment "prod" }}4Gi{{ else if eq .Values.environment "qa" }}2Gi{{ else }}1Gi{{ end }}"
+    defaultRequest:
+      cpu: "{{ if eq .Values.environment "prod" }}200m{{ else }}100m{{ end }}"
+      memory: "{{ if eq .Values.environment "prod" }}256Mi{{ else }}128Mi{{ end }}"
+    max:
+      cpu: {{ .Values.cpu.limit }}
+      memory: {{ .Values.memory.limit }}
+    min:
+      cpu: "{{ if eq .Values.environment "prod" }}100m{{ else }}50m{{ end }}"
+      memory: "{{ if eq .Values.environment "prod" }}128Mi{{ else }}64Mi{{ end }}"
+    type: Container
+  # Pod limits - scaled by environment
+  - max:
+      cpu: {{ .Values.cpu.limit }}
+      memory: {{ .Values.memory.limit }}
+    type: Pod
+  # PVC limits - environment specific
+  - max:
+      storage: "{{ if eq .Values.environment "prod" }}100Gi{{ else if eq .Values.environment "qa" }}50Gi{{ else }}20Gi{{ end }}"
+    min:
+      storage: "{{ if eq .Values.environment "prod" }}5Gi{{ else }}1Gi{{ end }}"
+    type: PersistentVolumeClaim

@@ -1,0 +1,64 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: web-portal-cluster-qa
+  labels:
+    environment: qa
+    deployment-type: cluster-based
+
+resources:
+- ../../base
+
+namespace: frontend-team
+
+namePrefix: qa-
+
+commonLabels:
+  environment: qa
+  cluster: qa-cluster
+
+patchesStrategicMerge:
+- deployment-patch.yaml
+- route-patch.yaml
+
+# Environment configuration for cluster-based deployment
+configMapGenerator:
+- name: web-portal-config
+  behavior: merge
+  literals:
+  - app.properties=|
+      app.name=Web Portal (QA Cluster)
+      app.environment=qa
+      app.version=v1.0.0
+      logging.level=INFO
+      features.debug=false
+- name: environment-config
+  literals:
+  - ENVIRONMENT=qa
+  - NAMESPACE=frontend-team
+  - ROUTE_HOST=web-portal-qa.apps.qa-cluster.local
+  - CLUSTER_DOMAIN=apps.qa-cluster.local
+  - CLUSTER_NAME=qa-cluster
+  - IMAGE_TAG=stable
+
+# Dynamic hostname configuration
+replacements:
+- source:
+    kind: ConfigMap
+    name: environment-config
+    fieldPath: data.ROUTE_HOST
+  targets:
+  - select:
+      kind: Route
+      name: web-portal
+    fieldPaths:
+    - spec.host
+
+images:
+- name: quay.io/redhattraining/hello-world-nginx
+  newTag: stable
+
+replicas:
+- name: web-portal
+  count: 2

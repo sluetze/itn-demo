@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-portal
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: web-portal
+        env:
+        - name: APP_NAME
+          value: "Web Portal (QA)"
+        - name: ENVIRONMENT
+          value: "qa"
+        - name: DEBUG_MODE
+          value: "false"
+        - name: LOG_LEVEL
+          value: "INFO"
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi

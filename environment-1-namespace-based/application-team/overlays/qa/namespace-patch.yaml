@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: frontend-team-qa
+  labels:
+    environment: qa
+  annotations:
+    environment: qa
+    openshift.io/description: "Namespace for frontend-team qa environment"
+    openshift.io/display-name: "Frontend Team QA"

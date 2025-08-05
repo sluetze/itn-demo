@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: frontend-team-dev
+  labels:
+    environment: dev
+  annotations:
+    environment: dev
+    openshift.io/description: "Namespace for frontend-team dev environment"
+    openshift.io/display-name: "Frontend Team Development"

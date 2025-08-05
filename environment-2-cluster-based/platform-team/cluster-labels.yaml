@@ -1,0 +1,68 @@
+# This file contains the cluster label configurations
+# Apply these labels to your managed clusters through ACM console or kubectl
+
+# Development Cluster Labels
+---
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  name: development-cluster
+  labels:
+    name: development-cluster
+    app-env: 'true'
+    environment: dev
+    cluster-type: development
+    cpu_limit: '2'
+    memory_limit: '4Gi'
+    storage_limit: '10Gi'
+    replicas: '1'
+    region: us-east-1
+    cloud: aws
+    team: frontend-team
+    domain: apps.dev-cluster.local
+spec:
+  hubAcceptsClient: true
+
+---
+# QA Cluster Labels
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  name: qa-cluster
+  labels:
+    name: qa-cluster
+    app-env: 'true'
+    environment: qa
+    cluster-type: testing
+    cpu_limit: '4'
+    memory_limit: '8Gi'
+    storage_limit: '20Gi'
+    replicas: '2'
+    region: us-west-2
+    cloud: aws
+    team: frontend-team
+    domain: apps.qa-cluster.local
+spec:
+  hubAcceptsClient: true
+
+---
+# Production Cluster Labels
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  name: production-cluster
+  labels:
+    name: production-cluster
+    app-env: 'true'
+    environment: prod
+    cluster-type: production
+    cpu_limit: '8'
+    memory_limit: '16Gi'
+    storage_limit: '50Gi'
+    replicas: '3'
+    region: us-central-1
+    cloud: aws
+    team: frontend-team
+    domain: apps.prod-cluster.local
+spec:
+  hubAcceptsClient: true

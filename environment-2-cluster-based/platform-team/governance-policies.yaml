@@ -1,0 +1,185 @@
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: frontend-team-multi-cluster-security-policy
+  namespace: default
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-7 Boundary Protection
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: frontend-team-security-context-policy
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: LimitRange
+                metadata:
+                  name: frontend-team-limits
+                  namespace: frontend-team
+                spec:
+                  limits:
+                  - default:
+                      cpu: "500m"
+                      memory: "1Gi"
+                    defaultRequest:
+                      cpu: "100m"
+                      memory: "128Mi"
+                    max:
+                      cpu: '{{ fromClusterClaim "cpu_limit" }}'
+                      memory: '{{ fromClusterClaim "memory_limit" }}'
+                    type: Container
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: frontend-team-pod-security-policy
+  namespace: default
+  annotations:
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    policy.open-cluster-management.io/categories: SI System and Information Integrity
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: frontend-team-pod-security-standards
+        spec:
+          remediationAction: enforce
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: frontend-team
+                  labels:
+                    pod-security.kubernetes.io/enforce: restricted
+                    pod-security.kubernetes.io/audit: restricted
+                    pod-security.kubernetes.io/warn: restricted
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: frontend-team-environment-specific-policy
+  namespace: default
+  annotations:
+    policy.open-cluster-management.io/standards: Custom
+    policy.open-cluster-management.io/categories: Environment Specific
+spec:
+  remediationAction: enforce
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: production-only-policies
+        spec:
+          remediationAction: enforce
+          severity: medium
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: networking.k8s.io/v1
+                kind: NetworkPolicy
+                metadata:
+                  name: frontend-team-production-isolation
+                  namespace: frontend-team
+                spec:
+                  podSelector: {}
+                  policyTypes:
+                  - Ingress
+                  - Egress
+                  ingress:
+                  - from:
+                    - namespaceSelector:
+                        matchLabels:
+                          name: openshift-ingress
+                    ports:
+                    - protocol: TCP
+                      port: 8080
+                  egress:
+                  - to: []
+                    ports:
+                    - protocol: TCP
+                      port: 443
+                    - protocol: TCP
+                      port: 53
+                    - protocol: UDP
+                      port: 53
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: frontend-team-all-clusters-placement
+  namespace: default
+spec:
+  clusterSets:
+  - global
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchLabels:
+          app-env: 'true'
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: frontend-team-prod-only-placement
+  namespace: default
+spec:
+  clusterSets:
+  - global
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchLabels:
+          environment: prod
+          app-env: 'true'
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: frontend-team-security-policy-binding
+  namespace: default
+placementRef:
+  name: frontend-team-all-clusters-placement
+  kind: Placement
+  apiGroup: cluster.open-cluster-management.io
+subjects:
+- name: frontend-team-multi-cluster-security-policy
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+- name: frontend-team-pod-security-policy
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: frontend-team-prod-policy-binding
+  namespace: default
+placementRef:
+  name: frontend-team-prod-only-placement
+  kind: Placement
+  apiGroup: cluster.open-cluster-management.io
+subjects:
+- name: frontend-team-environment-specific-policy
+  kind: Policy
+  apiGroup: policy.open-cluster-management.io

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: frontend-team
+  labels:
+    environment: prod
+    cluster: production-cluster
+  annotations:
+    environment: prod
+    cluster: production-cluster
+    openshift.io/description: "Namespace for frontend-team on production-cluster"
+    openshift.io/display-name: "Frontend Team (Production Cluster)"

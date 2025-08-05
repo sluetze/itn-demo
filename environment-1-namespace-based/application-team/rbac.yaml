@@ -1,0 +1,91 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: frontend-team-admin
+  namespace: frontend-team-dev
+  labels:
+    team: frontend-team
+    environment: dev
+    managed-by: platform-team
+rules:
+# Full access to most resources in the namespace
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["apps"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["extensions"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["networkpolicies", "ingresses"]
+  verbs: ["*"]
+- apiGroups: ["route.openshift.io"]
+  resources: ["routes"]
+  verbs: ["*"]
+- apiGroups: ["image.openshift.io"]
+  resources: ["imagestreams", "imagestreamtags"]
+  verbs: ["*"]
+- apiGroups: ["apps.openshift.io"]
+  resources: ["deploymentconfigs"]
+  verbs: ["*"]
+- apiGroups: ["build.openshift.io"]
+  resources: ["buildconfigs", "builds"]
+  verbs: ["*"]
+# Restricted access to certain resources
+- apiGroups: [""]
+  resources: ["resourcequotas", "limitranges"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: frontend-team-admin-binding
+  namespace: frontend-team-dev
+  labels:
+    team: frontend-team
+    environment: dev
+    managed-by: platform-team
+subjects:
+- kind: User
+  name: frontend-dev@company.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: frontend-lead@company.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: frontend-team-dev
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: frontend-team-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: frontend-team-image-puller
+  namespace: frontend-team-dev
+  labels:
+    team: frontend-team
+    environment: dev
+    managed-by: platform-team
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: frontend-team-dev
+- kind: User
+  name: frontend-dev@company.com
+  apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: frontend-lead@company.com
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: system:image-puller
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,73 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: frontend-team-web-portal-clusters
+  namespace: openshift-gitops
+  labels:
+    app.kubernetes.io/name: frontend-team-web-portal-clusters
+    app.kubernetes.io/part-of: frontend-team
+spec:
+  generators:
+  - clusters:
+      selector:
+        matchLabels:
+          app-env: 'true'
+      values:
+        environment: '{{ metadata.labels.environment }}'
+        overlay: '{{ metadata.labels.environment }}'
+        hostname: 'web-portal{{ if ne metadata.labels.environment "prod" }}-{{ metadata.labels.environment }}{{ end }}.{{ metadata.labels.domain | default "apps.cluster.local" }}'
+  template:
+    metadata:
+      name: 'web-portal-{{metadata.labels.environment}}-{{name}}'
+      labels:
+        app.kubernetes.io/name: 'web-portal-{{metadata.labels.environment}}'
+        app.kubernetes.io/part-of: frontend-team
+        environment: '{{metadata.labels.environment}}'
+        cluster: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/your-org/itn-demo'
+        targetRevision: main
+        path: 'application/overlays/cluster-{{metadata.labels.environment}}'
+        kustomize:
+          patches:
+          - target:
+              kind: ConfigMap
+              name: environment-config
+            patch: |
+              - op: replace
+                path: /data/ROUTE_HOST
+                value: '{{hostname}}'
+              - op: replace
+                path: /data/CLUSTER_DOMAIN
+                value: '{{ metadata.labels.domain | default "apps.cluster.local" }}'
+              - op: replace
+                path: /data/CLUSTER_NAME
+                value: '{{name}}'
+      destination:
+        server: '{{server}}'
+        namespace: frontend-team
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=false  # Namespace should already exist from setup
+        - PrunePropagationPolicy=foreground
+        - PruneLast=true
+        - RespectIgnoreDifferences=true
+      revisionHistoryLimit: 10
+      ignoreDifferences:
+      - group: route.openshift.io
+        kind: Route
+        jsonPointers:
+        - /spec/host
+      - group: apps
+        kind: Deployment
+        jsonPointers:
+        - /spec/replicas
+      - group: autoscaling
+        kind: HorizontalPodAutoscaler
+        jsonPointers:
+        - /status

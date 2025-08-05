@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: frontend-team-quota
+  namespace: frontend-team-qa
+  labels:
+    environment: qa
+spec:
+  hard:
+    # Compute resources - QA limits
+    requests.cpu: "1"
+    requests.memory: "2Gi"
+    limits.cpu: "4"
+    limits.memory: "8Gi"
+
+    # Storage resources
+    requests.storage: "20Gi"
+    persistentvolumeclaims: "8"
+
+    # Object count quotas - QA limits
+    pods: "30"
+    services: "15"
+    secrets: "30"
+    configmaps: "30"

@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: frontend-team-namespace-setup
+  namespace: openshift-gitops
+  labels:
+    app.kubernetes.io/name: frontend-team-setup
+    app.kubernetes.io/part-of: platform-governance
+spec:
+  generators:
+  - list:
+      elements:
+      - env: dev
+        namespace: frontend-team-dev
+        cpu_limit: "2"
+        memory_limit: "4Gi"
+        storage_limit: "10Gi"
+        replicas: "1"
+      - env: qa
+        namespace: frontend-team-qa
+        cpu_limit: "4"
+        memory_limit: "8Gi"
+        storage_limit: "20Gi"
+        replicas: "2"
+      - env: prod
+        namespace: frontend-team-prod
+        cpu_limit: "8"
+        memory_limit: "16Gi"
+        storage_limit: "50Gi"
+        replicas: "3"
+  template:
+    metadata:
+      name: 'frontend-team-{{env}}-setup'
+      labels:
+        app.kubernetes.io/name: 'frontend-team-{{env}}'
+        app.kubernetes.io/part-of: platform-governance
+        environment: '{{env}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/your-org/itn-demo'
+        targetRevision: main
+        path: 'environment-1-namespace-based/application-team/overlays/{{env}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
+        - PrunePropagationPolicy=foreground
+        - PruneLast=true
+      revisionHistoryLimit: 10

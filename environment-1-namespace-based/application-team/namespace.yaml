@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: frontend-team-dev
+  labels:
+    name: frontend-team-dev
+    team: frontend-team
+    environment: dev
+    managed-by: platform-team
+    app.kubernetes.io/managed-by: acm
+  annotations:
+    created-by: "ACM ApplicationSet"
+    environment: dev
+    openshift.io/description: "Namespace for frontend-team dev environment"
+    openshift.io/display-name: "Frontend Team Dev"

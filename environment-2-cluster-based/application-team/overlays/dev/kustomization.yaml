@@ -1,0 +1,35 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: frontend-team-dev-cluster
+  labels:
+    environment: dev
+    cluster: development-cluster
+
+resources:
+- ../../
+
+namespace: frontend-team
+
+commonLabels:
+  environment: dev
+  cluster: development-cluster
+
+# Development cluster specific configuration
+configMapGenerator:
+- name: cluster-config
+  behavior: replace
+  literals:
+  - CLUSTER_NAME=development-cluster
+  - ENVIRONMENT=dev
+  - NAMESPACE_NAME=frontend-team
+  - CPU_LIMIT=2
+  - MEMORY_LIMIT=4Gi
+  - STORAGE_LIMIT=10Gi
+  - TEAM_NAME=frontend-team
+  - CLUSTER_DOMAIN=apps.dev-cluster.local
+
+patchesStrategicMerge:
+- namespace-patch.yaml
+- resourcequota-patch.yaml

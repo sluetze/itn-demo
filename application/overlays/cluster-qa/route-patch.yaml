@@ -1,0 +1,11 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: web-portal
+  annotations:
+    haproxy.router.openshift.io/timeout: 30s
+spec:
+  host: web-portal-qa.apps.qa-cluster.local
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

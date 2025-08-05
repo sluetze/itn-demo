@@ -1,0 +1,118 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.namespace }}-admin
+  namespace: {{ .Values.namespace }}
+  labels:
+    team: {{ .Values.team.name }}
+    environment: {{ .Values.environment }}
+    cluster: {{ .Values.cluster.name }}
+    managed-by: {{ .Values.labels.managed-by }}
+rules:
+# Full access to most resources in the namespace
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["apps"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["extensions"]
+  resources: ["*"]
+  verbs: ["*"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["networkpolicies", "ingresses"]
+  verbs: ["*"]
+- apiGroups: ["route.openshift.io"]
+  resources: ["routes"]
+  verbs: ["*"]
+- apiGroups: ["image.openshift.io"]
+  resources: ["imagestreams", "imagestreamtags"]
+  verbs: ["*"]
+- apiGroups: ["apps.openshift.io"]
+  resources: ["deploymentconfigs"]
+  verbs: ["*"]
+- apiGroups: ["build.openshift.io"]
+  resources: ["buildconfigs", "builds"]
+  verbs: ["*"]
+# Environment-specific access
+{{- if eq .Values.environment "prod" }}
+- apiGroups: ["monitoring.coreos.com"]
+  resources: ["servicemonitors", "prometheusrules"]
+  verbs: ["*"]
+{{- end }}
+# Restricted access to certain resources
+- apiGroups: [""]
+  resources: ["resourcequotas", "limitranges"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["rbac.authorization.k8s.io"]
+  resources: ["roles", "rolebindings"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.namespace }}-admin-binding
+  namespace: {{ .Values.namespace }}
+  labels:
+    team: {{ .Values.team.name }}
+    environment: {{ .Values.environment }}
+    cluster: {{ .Values.cluster.name }}
+    managed-by: {{ .Values.labels.managed-by }}
+subjects:
+{{- range .Values.team.users }}
+- kind: User
+  name: {{ . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+- kind: Group
+  name: {{ $.Values.team.name }}-{{ $.Values.environment }}
+  apiGroup: rbac.authorization.k8s.io
+# Service accounts for automation
+- kind: ServiceAccount
+  name: {{ $.Values.team.name }}-deployer
+  namespace: {{ $.Values.namespace }}
+roleRef:
+  kind: Role
+  name: {{ .Values.namespace }}-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+# Cross-cluster image pulling capability
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .Values.namespace }}-{{ .Values.cluster.name }}-image-puller
+  labels:
+    team: {{ .Values.team.name }}
+    environment: {{ .Values.environment }}
+    cluster: {{ .Values.cluster.name }}
+    managed-by: {{ .Values.labels.managed-by }}
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: {{ .Values.namespace }}
+- kind: ServiceAccount
+  name: {{ .Values.team.name }}-deployer
+  namespace: {{ .Values.namespace }}
+{{- range .Values.team.users }}
+- kind: User
+  name: {{ . }}
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+roleRef:
+  kind: ClusterRole
+  name: system:image-puller
+  apiGroup: rbac.authorization.k8s.io
+---
+# Service account for deployment automation
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.team.name }}-deployer
+  namespace: {{ .Values.namespace }}
+  labels:
+    team: {{ .Values.team.name }}
+    environment: {{ .Values.environment }}
+    cluster: {{ .Values.cluster.name }}
+    managed-by: {{ .Values.labels.managed-by }}
+automountServiceAccountToken: true

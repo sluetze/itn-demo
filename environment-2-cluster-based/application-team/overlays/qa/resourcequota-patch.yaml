@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: frontend-team-quota
+  namespace: frontend-team
+  labels:
+    environment: qa
+    cluster: qa-cluster
+spec:
+  hard:
+    # QA cluster resource limits
+    requests.cpu: "1"
+    requests.memory: "2Gi"
+    limits.cpu: "4"
+    limits.memory: "8Gi"
+    requests.storage: "20Gi"
+    persistentvolumeclaims: "8"
+    pods: "30"
+    services: "15"

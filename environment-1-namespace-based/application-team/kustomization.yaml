@@ -1,0 +1,59 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: frontend-team-base
+  labels:
+    app.kubernetes.io/name: frontend-team-setup
+    app.kubernetes.io/part-of: platform-governance
+
+resources:
+- namespace.yaml
+- resourcequota.yaml
+- rbac.yaml
+- limitrange.yaml
+
+# Default configuration - can be overridden by environment overlays
+namespace: frontend-team-dev
+
+commonLabels:
+  team: frontend-team
+  managed-by: platform-team
+
+# Configuration variables that can be replaced
+replacements:
+- source:
+    kind: ConfigMap
+    name: environment-config
+    fieldPath: data.NAMESPACE_NAME
+  targets:
+  - select:
+      kind: Namespace
+    fieldPaths:
+    - metadata.name
+  - select:
+      kind: ResourceQuota
+    fieldPaths:
+    - metadata.namespace
+  - select:
+      kind: Role
+    fieldPaths:
+    - metadata.namespace
+  - select:
+      kind: RoleBinding
+    fieldPaths:
+    - metadata.namespace
+  - select:
+      kind: LimitRange
+    fieldPaths:
+    - metadata.namespace
+
+configMapGenerator:
+- name: environment-config
+  literals:
+  - NAMESPACE_NAME=frontend-team-dev
+  - ENVIRONMENT=dev
+  - CPU_LIMIT=2
+  - MEMORY_LIMIT=4Gi
+  - STORAGE_LIMIT=10Gi
+  - TEAM_NAME=frontend-team

@@ -1,0 +1,63 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+  name: frontend-team-cluster-base
+  labels:
+    app.kubernetes.io/name: frontend-team-cluster-setup
+    app.kubernetes.io/part-of: platform-governance
+
+resources:
+- namespace.yaml
+- resourcequota.yaml
+- rbac.yaml
+- limitrange.yaml
+
+# Default configuration for development cluster
+namespace: frontend-team
+
+commonLabels:
+  team: frontend-team
+  managed-by: platform-team
+
+# Configuration variables that can be replaced by overlays
+configMapGenerator:
+- name: cluster-config
+  literals:
+  - CLUSTER_NAME=development-cluster
+  - ENVIRONMENT=dev
+  - NAMESPACE_NAME=frontend-team
+  - CPU_LIMIT=2
+  - MEMORY_LIMIT=4Gi
+  - STORAGE_LIMIT=10Gi
+  - TEAM_NAME=frontend-team
+  - CLUSTER_DOMAIN=apps.dev-cluster.local
+
+# Dynamic cluster and environment configuration
+replacements:
+- source:
+    kind: ConfigMap
+    name: cluster-config
+    fieldPath: data.CLUSTER_NAME
+  targets:
+  - select:
+      kind: Namespace
+    fieldPaths:
+    - metadata.labels.cluster
+    - metadata.annotations.cluster
+  - select:
+      kind: ResourceQuota
+    fieldPaths:
+    - metadata.labels.cluster
+  - select:
+      kind: Role
+    fieldPaths:
+    - metadata.labels.cluster
+  - select:
+      kind: RoleBinding
+    fieldPaths:
+    - metadata.labels.cluster
+  - select:
+      kind: LimitRange
+    fieldPaths:
+    - metadata.labels.cluster
